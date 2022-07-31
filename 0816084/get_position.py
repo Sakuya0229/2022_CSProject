@@ -36,7 +36,7 @@ while(capR.isOpened()):
     if flag%5 ==0:
         rectsR, weightsR = hog.detectMultiScale(imgR,winStride=(12, 8), scale=1.05,useMeanshiftGrouping = False)
     gray = cv2.cvtColor(imgR, cv2.COLOR_BGR2GRAY)
-    badminton = badminton_haar.detectMultiScale(gray, 1.06, 1,minSize=(20, 20))
+    badminton = badminton_haar.detectMultiScale(gray, 1.06, 1,minSize=(10, 10))
 
 
 
