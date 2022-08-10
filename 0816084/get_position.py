@@ -80,7 +80,7 @@ while(capR.isOpened()):
 
     contours, _ = cv2.findContours(image=thresh_frame, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
     for contour in contours:
-        if cv2.contourArea(contour) < 1:
+        if cv2.contourArea(contour) < 100 or cv2.contourArea(contour) > 2500:
             # too small: skip!
             continue
         (x, y, w, h) = cv2.boundingRect(contour)
