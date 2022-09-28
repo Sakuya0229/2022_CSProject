@@ -15,7 +15,7 @@ hog = cv2.HOGDescriptor()
 hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 
 
-capR = cv2.VideoCapture("CameraReaderR.avi")
+capR = cv2.VideoCapture("CameraReaderR (3).avi")
 width = capR.get(cv2.CAP_PROP_FRAME_WIDTH)
 height = capR.get(cv2.CAP_PROP_FRAME_HEIGHT)
 
@@ -27,6 +27,8 @@ frame_count = 0
 previous_frame = None
 prepared_frame=None
 #track=[]
+humans=[]
+
 
 while(capR.isOpened()):
     retR, imgR = capR.read()
@@ -41,7 +43,10 @@ while(capR.isOpened()):
 
     if frame_count%5 ==0:
         rectsR, weightsR = hog.detectMultiScale(imgR,winStride=(12, 8), scale=1.05,useMeanshiftGrouping = False)
-    humans=[]
+
+    if rectsR is not ():
+        humans=[]
+
     for body_i in rectsR:
         (x, y, w, h) = body_i
         if h > 400 and w > 200:
@@ -49,8 +54,11 @@ while(capR.isOpened()):
             point = np.float32(np.array([[[x+w/2,y+h-50]]]))
             pos=cv2.perspectiveTransform(point,M)[0][0]
             im = cv2.putText(img_rgb, f"{round(pos[0],3),round(pos[1],3)}", (x, y), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 0, 255), 1, cv2.LINE_AA)
-            cv2.rectangle(prepared_frame, (x, y), (x + w, y + h), (0, 0, 0), -1)
+            #cv2.rectangle(prepared_frame, (x, y), (x + w, y + h), (0, 0, 0), -1)
         humans.append(body_i)
+    for human in humans:
+        (x, y, w, h) = human
+        cv2.rectangle(prepared_frame, (x, y), (x + w, y + h), (0, 0, 0), -1)
 
 
 
@@ -67,7 +75,7 @@ while(capR.isOpened()):
     kernel = np.ones((5, 5))
     diff_frame = cv2.dilate(diff_frame, kernel, 1)
 
-    thresh_frame = cv2.threshold(src=diff_frame, thresh=20, maxval=255, type=cv2.THRESH_BINARY)[1]
+    thresh_frame = cv2.threshold(src=diff_frame, thresh=30, maxval=255, type=cv2.THRESH_BINARY)[1]
 
 
     contours, _ = cv2.findContours(image=thresh_frame, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
